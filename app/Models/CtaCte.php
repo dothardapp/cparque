@@ -5,24 +5,23 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Parcela extends Model
+class Ctacte extends Model
 {
     use HasFactory;
 
-    protected $table = 'parcelas';
+    protected $table = 'ctasctes';
 
     protected $fillable = [
-        'lote_id',
         'cliente_id',
-        'numero',
+        'fecha',
+        'tipo',
+        'debe',
+        'haber',
+        'anio',
+        'mes',
         'estado',
-        'descripcion',
+        'recibo',
     ];
-
-    public function lote()
-    {
-        return $this->belongsTo(Lote::class);
-    }
 
     public function cliente()
     {
