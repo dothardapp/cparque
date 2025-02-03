@@ -1,66 +1,60 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
-
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+    <img src="public/logo/LogoParque_01_433x340.png" width="400" alt="Corazón de Jesús - Cementerio Parque">
 </p>
 
-## About Laravel
+# Corazón de Jesús - Cementerio Parque
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Corazón de Jesús - Cementerio Parque es una aplicación de gestión diseñada para administrar los sectores, lotes y parcelas de un cementerio parque. Esta aplicación permite llevar un registro de las parcelas ocupadas y libres, mejorando la organización y facilitando la administración del espacio.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Características principales
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+-   Gestión de sectores, lotes y parcelas.
+-   Registro del estado de cada parcela (ocupada o libre).
+-   Administración de información relevante de los ocupantes.
+-   Implementación en Laravel con Filament y MariaDB para una experiencia de usuario óptima.
 
-## Learning Laravel
+## Tecnologías utilizadas
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+-   **Laravel**: Framework PHP para el desarrollo del backend.
+-   **Filament**: Panel administrativo eficiente y fácil de usar.
+-   **MariaDB**: Base de datos relacional para almacenamiento de información.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## Instalación
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+1. Clona el repositorio:
+    ```bash
+    git clone https://github.com/dothardapp/cparque.git
+    ```
+2. Accede al directorio del proyecto:
+    ```bash
+    cd cparque
+    ```
+3. Instala las dependencias de Laravel:
+    ```bash
+    composer install
+    ```
+4. Copia el archivo de configuración de entorno:
+    ```bash
+    cp .env.example .env
+    ```
+5. Configura la conexión a la base de datos en el archivo `.env`.
+6. Genera la clave de la aplicación:
+    ```bash
+    php artisan key:generate
+    ```
+7. Ejecuta las migraciones para crear la base de datos:
+    ```bash
+    php artisan migrate
+    ```
+8. Inicia el servidor de desarrollo:
+    ```bash
+    php artisan serve
+    ```
 
-## Laravel Sponsors
+## Contribuir
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+Si deseas contribuir al desarrollo de esta aplicación, por favor envía un pull request o contacta con el equipo a través del repositorio en GitHub.
 
-### Premium Partners
+## Licencia
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Este proyecto es de código abierto y está bajo la licencia MIT.
