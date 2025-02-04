@@ -11,9 +11,11 @@ return new class extends Migration
         Schema::create('contactos', function (Blueprint $table) {
             $table->id();
             $table->foreignId('cliente_id')->constrained('clientes')->onDelete('cascade');
-            $table->enum('tipo', ['domicilio', 'telefono', 'email'])->comment('Tipo de contacto: domicilio, teléfono o email');
-            $table->string('valor', 255)->comment('Valor del contacto (dirección, número o email)');
-            $table->string('comentario', 255)->nullable()->comment('Información adicional sobre el contacto');
+            $table->string('barrio', 100)->nullable()->comment('Barrio donde reside el cliente');
+            $table->string('domicilio', 255)->comment('Dirección exacta del cliente');
+            $table->string('telefono', 50)->nullable()->comment('Número de contacto del cliente');
+            $table->string('email', 100)->nullable()->comment('Correo electrónico del cliente');
+            $table->string('comentario', 255)->nullable()->comment('Información adicional relevante');
             $table->boolean('principal')->default(false)->comment('Indica si es el contacto principal del cliente');
             $table->timestamps();
         });

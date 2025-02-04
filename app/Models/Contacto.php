@@ -13,8 +13,10 @@ class Contacto extends Model
 
     protected $fillable = [
         'cliente_id',
-        'tipo',
-        'valor',
+        'barrio',
+        'domicilio',
+        'telefono',
+        'email',
         'comentario',
         'principal',
     ];

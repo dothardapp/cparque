@@ -10,7 +10,7 @@ Se aplican las siguientes transformaciones:
 
 -   `id_clientes` → No se usa directamente, se asocia con `cliente_id` en `contactos` a través del `codigo`.
 -   `barrio (CHAR(40))` → Se inserta en `contactos.barrio` si no está vacío.
--   `domicilio (CHAR(80))` → Si está vacío, se registra `"Sin domicilio - ACTUALIZAR"`.
+-   `domicilio (CHAR(80))` → Se inserta en `contactos.domicilio` si no está vacío.
 -   `telefono (CHAR(40))` → Se inserta en `contactos.telefono` si no está vacío.
 -   `email` → No existe en `CPARQUEbase`, se inserta como `NULL`.
 -   `comentario` → Se inserta como `NULL`.
@@ -72,7 +72,7 @@ try {
 
         // Asignar valores a los campos de contacto
         $barrio = !empty($cliente['barrio']) ? trim($cliente['barrio']) : null;
-        $domicilio = !empty($cliente['domicilio']) ? trim($cliente['domicilio']) : "Sin domicilio - ACTUALIZAR";
+        $domicilio = !empty($cliente['domicilio']) ? trim($cliente['domicilio']) : null;
         $telefono = !empty($cliente['telefono']) ? trim($cliente['telefono']) : (!empty($cliente['celular']) ? trim($cliente['celular']) : null);
         $email = null;
         $comentario = null;
@@ -121,7 +121,6 @@ Para ejecutar el script de migración, sigue estos pasos:
 
 -   "Conexión establecida correctamente."
 -   "Migrado contacto para Cliente ID: X → Barrio: ABC, Domicilio: Calle Falsa 123, Teléfono: 123456789"
--   "Migrado contacto para Cliente ID: X → Barrio: ABC, Domicilio: Sin domicilio - ACTUALIZAR, Teléfono: 123456789"
 -   "Advertencia: Cliente con Código YYY no encontrado en cparque, omitiendo contactos."
 -   "Migración completada. Total de registros migrados: X."
 
