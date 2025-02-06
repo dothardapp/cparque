@@ -3,11 +3,11 @@
 namespace App\Filament\Resources\ClienteResource\Pages;
 
 use App\Filament\Resources\ClienteResource;
-use App\Models\Cliente;
-use App\Models\Parcela;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+
 
 class CreateCliente extends CreateRecord
 {
@@ -15,7 +15,8 @@ class CreateCliente extends CreateRecord
 
     protected function handleRecordCreation(array $data): Model
     {
-        $cliente = \DB::transaction(function () use ($data) {
+        $cliente = DB::transaction(function () use ($data) {
+            
             // 1️⃣ Crear el cliente
             $cliente = \App\Models\Cliente::create($data);
 
