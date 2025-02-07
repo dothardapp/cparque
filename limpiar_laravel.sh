@@ -32,10 +32,6 @@ php artisan event:clear
 echo "🎨 Limpiando caché de Filament..."
 php artisan filament:cache
 
-# Limpiar sesiones antiguas
-echo "🗑️ Eliminando sesiones antiguas..."
-php artisan session:clear
-
 # Optimizar la aplicación
 echo "⚡ Recompilando archivos optimizados..."
 php artisan optimize

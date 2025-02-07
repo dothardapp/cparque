@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Cliente extends Model
 {
@@ -65,4 +67,35 @@ class Cliente extends Model
     {
         return ucwords(strtolower($value));
     }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($cliente) {
+            DB::transaction(function () use ($cliente) {
+                // 1️⃣ Obtener la parcela asignada al cliente
+                $parcela = \App\Models\Parcela::where('cliente_id', $cliente->id)->first();
+
+                if ($parcela) {
+                    // 2️⃣ Liberar la parcela (estado a 'libre' y cliente_id a 185000)
+                    $parcela->update([
+                        'estado' => 'libre',
+                        'cliente_id' => 185000,
+                    ]);
+                }
+
+                // 3️⃣ Borrar los inhumados asociados al cliente
+                \App\Models\Inhumado::where('cliente_id', $cliente->id)->delete();
+
+                // 4️⃣ Enviar una notificación
+                Notification::make()
+                    ->title('Cliente eliminado')
+                    ->body("Se eliminó el cliente {$cliente->nombre} {$cliente->apellido}. La parcela fue liberada y los inhumados asociados han sido eliminados.")
+                    ->success()
+                    ->send();
+            });
+        });
+    }
+
 }

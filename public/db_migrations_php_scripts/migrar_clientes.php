@@ -49,8 +49,13 @@ try {
         echo "Migrado cliente ID: {$cliente['id_clientes']} → DNI: {$dni}, Código: {$codigo}, Nombre: {$nombre} {$apellido}\n";
     }
 
+    $insert_query = 'INSERT INTO clientes (id, dni, codigo, nombre, apellido, fecha_nacimiento, created_at, updated_at)
+                     VALUES (:id, :dni, :codigo, :nombre, :apellido, :fecha_nacimiento, NOW(), NOW())';
+    $insert_stmt = $pdo_new->prepare($insert_query);
+
     // Agregar el cliente especial "Parque Zenta S.R.L."
     $insert_stmt->execute([
+        ':id' => '185000',
         ':dni' => '00000000',
         ':codigo' => '185000',
         ':nombre' => 'Parque Zenta S.R.L.',
