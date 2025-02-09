@@ -3,6 +3,8 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ClienteResource\Pages;
+use App\Filament\Resources\ClienteResource\RelationManagers\ContactosRelationManager;
+use App\Filament\Resources\ClienteResource\RelationManagers\CuentasCorrientesRelationManager;
 use App\Filament\Resources\ClienteResource\RelationManagers\InhumadosRelationManager;
 use App\Filament\Resources\ClienteResource\RelationManagers\ParcelasRelationManager;
 use App\Models\Cliente;
@@ -102,6 +104,8 @@ class ClienteResource extends Resource
         return [
             ParcelasRelationManager::class,
             InhumadosRelationManager::class,
+            ContactosRelationManager::class,
+            CuentasCorrientesRelationManager::class
         ];
     }
 

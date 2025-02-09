@@ -39,7 +39,7 @@ class Cliente extends Model
      */
     public function cuentasCorrientes()
     {
-        return $this->hasMany(Ctacte::class);
+        return $this->hasMany(CtaCte::class);
     }
 
     /**

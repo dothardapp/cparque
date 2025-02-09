@@ -7,12 +7,12 @@ use App\Models\Parcela;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Validation\ValidationException;
 use Filament\Tables\Actions\Action;
 use Illuminate\Support\Facades\DB;
 
@@ -184,7 +184,80 @@ class InhumadosRelationManager extends RelationManager
                     }),
 
             ])
-            ->actions([])
+            ->actions(
+                [
+                    Tables\Actions\EditAction::make()
+                        ->modalHeading('Editar Inhumado')
+                        ->form(fn($record) => [
+                            TextInput::make('nombre')
+                                ->label('Nombre')
+                                ->required()
+                                ->maxLength(255),
+
+                            TextInput::make('apellido')
+                                ->label('Apellido')
+                                ->maxLength(255),
+
+                            DatePicker::make('fecha_nacimiento')
+                                ->label('Fecha de Nacimiento')
+                                ->default('1970-01-01'),
+
+                            DatePicker::make('fecha_inhumacion')
+                                ->label('Fecha de Inhumación')
+                                ->required(),
+
+                            Select::make('parcela_id')
+                                ->label('Parcela')
+                                ->options(
+                                    fn() =>
+                                    $this->getOwnerRecord()?->parcelas()->pluck('descripcion', 'id')->toArray() ?? []
+                                )
+                                ->searchable()
+                                ->required()
+                                ->reactive()
+                                ->afterStateUpdated(function ($state, callable $set) {
+                                    if (!$state) return;
+
+                                    // Contar cuántos inhumados hay en la nueva parcela seleccionada
+                                    $count = \App\Models\Inhumado::where('parcela_id', $state)->count();
+                                    $niveles = ['primer_nivel', 'segundo_nivel', 'tercer_nivel'];
+
+                                    if ($count >= 3) {
+                                        $set('nivel', '⚠️ Parcela completa');
+                                        $set('parcela_llena', true);
+                                    } else {
+                                        $set('nivel', $niveles[$count] ?? 'primer_nivel');
+                                        $set('parcela_llena', false);
+                                    }
+                                }),
+
+                            TextInput::make('nivel')
+                                ->label('Nivel')
+                                ->disabled(),
+
+                            Hidden::make('parcela_llena'), // Campo oculto para verificar si la parcela está llena
+                        ])
+                        ->mutateFormDataUsing(function (array $data, $record) {
+                            if ($data['parcela_llena'] === true) {
+                                Notification::make()
+                                    ->title('Error')
+                                    ->body('No se puede cambiar a esta parcela, ya está completa.')
+                                    ->danger()
+                                    ->send();
+                                return false; // Evita que se guarde
+                            }
+
+                            // Si el usuario cambió de parcela, recalculamos el nivel
+                            if ($record->parcela_id !== $data['parcela_id']) {
+                                $count = \App\Models\Inhumado::where('parcela_id', $data['parcela_id'])->count();
+                                $niveles = ['primer_nivel', 'segundo_nivel', 'tercer_nivel'];
+                                $data['nivel'] = $niveles[$count] ?? 'primer_nivel';
+                            }
+
+                            return $data;
+                        }),
+                ]
+            )
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
             ]);

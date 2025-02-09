@@ -28,4 +28,9 @@ class Parcela extends Model
     {
         return $this->belongsTo(Cliente::class);
     }
+
+    public function expensas()
+    {
+        return $this->hasMany(Expensa::class);
+    }
 }

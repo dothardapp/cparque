@@ -2,6 +2,8 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Resources\ClienteResource\Widgets\ClientesOverview;
+use App\Filament\Widgets\CantidadInhumacionesChart;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -39,6 +41,8 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
+                ClientesOverview::class,
+                CantidadInhumacionesChart::class,
             ])
             ->middleware([
                 EncryptCookies::class,
