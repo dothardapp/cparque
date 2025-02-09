@@ -9,7 +9,8 @@ return new class extends Migration {
     {
         Schema::create('expensas', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('parcela_id'); // Ahora la expensa está vinculada a una parcela
+            $table->unsignedBigInteger('parcela_id');
+            $table->unsignedBigInteger('cliente_id'); // Cliente dueño de la parcela
             $table->integer('anio');
             $table->integer('mes');
             $table->decimal('monto', 10, 2);
@@ -20,6 +21,7 @@ return new class extends Migration {
 
             $table->unique(['parcela_id', 'anio', 'mes']);
             $table->foreign('parcela_id')->references('id')->on('parcelas')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('cliente_id')->references('id')->on('clientes')->onDelete('cascade')->onUpdate('cascade');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
         });
     }

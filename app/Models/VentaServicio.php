@@ -19,7 +19,7 @@ class VentaServicio extends Model
 
     public function cliente()
     {
-        return $this->belongsTo(Cliente::class, 'codigo_cliente', 'codigo');
+        return $this->belongsTo(Cliente::class, 'codigo_cliente', 'id');
     }
 
     public function servicio()

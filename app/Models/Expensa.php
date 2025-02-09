@@ -11,6 +11,7 @@ class Expensa extends Model
 
     protected $fillable = [
         'parcela_id',
+        'cliente_id',
         'anio',
         'mes',
         'monto',
@@ -22,6 +23,11 @@ class Expensa extends Model
     public function parcela()
     {
         return $this->belongsTo(Parcela::class);
+    }
+
+    public function cliente()
+    {
+        return $this->belongsTo(Cliente::class);
     }
 
     public function usuario()

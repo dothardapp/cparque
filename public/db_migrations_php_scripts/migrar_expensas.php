@@ -32,15 +32,15 @@ try {
     echo 'Total de registros a migrar: '.count($registros).PHP_EOL;
 
     // Preparar la consulta de inserción en la nueva base de datos
-    $insert_stmt = $pdo_new->prepare('INSERT INTO expensas (parcela_id, anio, mes, monto, saldo, estado, user_id)
-        VALUES (:parcela_id, :anio, :mes, :monto, :saldo, :estado, :user_id)
+    $insert_stmt = $pdo_new->prepare('INSERT INTO expensas (parcela_id, cliente_id, anio, mes, monto, saldo, estado, user_id)
+        VALUES (:parcela_id, :cliente_id, :anio, :mes, :monto, :saldo, :estado, :user_id)
         ON DUPLICATE KEY UPDATE saldo = saldo + VALUES(saldo)');
 
     $error_count = 0;
     foreach ($registros as $index => $row) {
         try {
-            // Obtener parcela_id a partir del cliente
-            $stmt_parcelas = $pdo_new->prepare('SELECT id FROM parcelas WHERE cliente_id = (SELECT id FROM clientes WHERE codigo = :codigo LIMIT 1)');
+            // Obtener parcela_id y cliente_id
+            $stmt_parcelas = $pdo_new->prepare('SELECT id, cliente_id FROM parcelas WHERE cliente_id = (SELECT id FROM clientes WHERE codigo = :codigo LIMIT 1)');
             $stmt_parcelas->execute([':codigo' => $row['codigo']]);
             $parcelas = $stmt_parcelas->fetchAll(PDO::FETCH_ASSOC);
 
@@ -56,10 +56,12 @@ try {
 
             foreach ($parcelas as $parcela) {
                 $parcela_id = $parcela['id'];
+                $cliente_id = $parcela['cliente_id'];
 
                 // Preparar datos para inserción con valores por defecto
                 $params = [
                     'parcela_id' => (int) $parcela_id,
+                    'cliente_id' => (int) $cliente_id,
                     'anio' => (int) $row['ano'],
                     'mes' => (int) $row['mes'],
                     'monto' => (float) $row['debe'],
@@ -71,7 +73,7 @@ try {
                 // Ejecutar inserción
                 $insert_stmt->execute($params);
 
-                echo "[$index] Insertado: Parcela ID {$parcela_id}, Año {$params['anio']}, Mes {$params['mes']}, Monto {$params['monto']}, Saldo {$params['saldo']}".PHP_EOL;
+                echo "[$index] Insertado: Parcela ID {$parcela_id}, Cliente ID {$cliente_id}, Año {$params['anio']}, Mes {$params['mes']}, Monto {$params['monto']}, Saldo {$params['saldo']}".PHP_EOL;
             }
         } catch (Exception $e) {
             $error_count++;
