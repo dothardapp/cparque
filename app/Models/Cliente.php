@@ -42,6 +42,10 @@ class Cliente extends Model
         return $this->hasMany(CtaCte::class);
     }
 
+    public function expensas(){
+        return $this->hasMany(Expensa::class);
+    }
+
     /**
      * Relación: Un cliente puede tener múltiples contactos.
      */

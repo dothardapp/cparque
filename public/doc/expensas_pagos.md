@@ -1,19 +1,17 @@
-# Documentación de Migraciones y Modelos de expensas, pagos y servicios
+# Documentación de Migraciones y Modelos de Expensas, Pagos y Servicios
 
-
-## 1 Creación de nuevos modelos y migraciones
+## 1️⃣ Creación de nuevos modelos y migraciones
 Ejecuta los siguientes comandos para generar los modelos y migraciones:
 ```bash
 php artisan make:model Expensa -m
 php artisan make:model Pago -m
 php artisan make:model ServicioAdicional -m
 php artisan make:model VentaServicio -m
-
 ```
 
 ---
 
-## 2 Contenido de las migraciones
+## 2️⃣ Contenido de las migraciones
 
 ### `create_expensas_table.php`
 ```php
@@ -38,15 +36,7 @@ Schema::create('expensas', function (Blueprint $table) {
 
 ---
 
-## 3 Aplicación de las migraciones
-Ejecuta el siguiente comando para aplicar todas las migraciones:
-```bash
-php artisan migrate
-```
-
----
-
-## 4 Contenido de los Modelos
+## 3️⃣ Contenido de los Modelos
 Los modelos se han actualizado con las relaciones correctas:
 
 ### `Expensa.php`
@@ -75,14 +65,17 @@ public function expensas() {
 }
 ```
 
-## 5 Ejecución del Script de Migración de Datos
+---
+
+## 4️⃣ Ejecución del Script de Migración de Datos
 Para migrar los datos de la base de datos antigua, ejecuta el script PHP de migración de expensas.
 
-## 8 Resumen de Mejoras
+---
+
+## 5️⃣ Resumen de Mejoras
 ✅ Se incluyó `cliente_id` en `expensas` para evitar `JOIN` adicionales.
 ✅ Se mejoraron los modelos con relaciones más eficientes.
 ✅ Se optimizó el script de migración para reducir errores duplicados.
 ✅ Se documentó cómo aplicar y verificar cada cambio en la base de datos.
 
 🚀 **Sistema listo para operar!** 🚀
-

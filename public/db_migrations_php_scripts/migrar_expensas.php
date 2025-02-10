@@ -9,7 +9,8 @@ $password = 'joselote'; // Cambia esto por la contraseña correcta
 $log_file = '/home/joselo/cparque/storage/logs/migrar_expensas.log';
 $clientes_sin_parcela = [];
 
-function writeLog($message) {
+function writeLog($message)
+{
     global $log_file;
     file_put_contents($log_file, date('[Y-m-d H:i:s] ') . $message . PHP_EOL, FILE_APPEND);
 }
@@ -26,10 +27,10 @@ try {
     writeLog("Conexión establecida correctamente.");
 
     // Obtener registros de la tabla antigua
-    $stmt_old = $pdo_old->query('SELECT id_ctacte, codigo, ano, mes, debe FROM CtaCte WHERE debe > 0');
+    $stmt_old = $pdo_old->query('SELECT id_ctacte, codigo, ano, mes, debe, haber FROM CtaCte WHERE debe >= 0');
     $registros = $stmt_old->fetchAll(PDO::FETCH_ASSOC);
 
-    echo 'Total de registros a migrar: '.count($registros).PHP_EOL;
+    echo 'Total de registros a migrar: ' . count($registros) . PHP_EOL;
 
     // Preparar la consulta de inserción en la nueva base de datos
     $insert_stmt = $pdo_new->prepare('INSERT INTO expensas (parcela_id, cliente_id, anio, mes, monto, saldo, estado, user_id)
@@ -58,22 +59,29 @@ try {
                 $parcela_id = $parcela['id'];
                 $cliente_id = $parcela['cliente_id'];
 
-                // Preparar datos para inserción con valores por defecto
+                // Determinar el estado de la expensa basado en debe y haber
+                $estado = match (true) {
+                    $row['debe'] == $row['haber'] => 'pagado',
+                    $row['debe'] > 0 && $row['haber'] == 0 => 'pendiente',
+                    $row['debe'] > 0 && $row['haber'] > 0 && $row['haber'] < $row['debe'] => 'pagado parcialmente',
+                    default => 'pendiente',
+                };
+
                 $params = [
                     'parcela_id' => (int) $parcela_id,
                     'cliente_id' => (int) $cliente_id,
                     'anio' => (int) $row['ano'],
                     'mes' => (int) $row['mes'],
                     'monto' => (float) $row['debe'],
-                    'saldo' => (float) $row['debe'],
-                    'estado' => 'pendiente',
+                    'saldo' => (float) ($row['debe'] - $row['haber']),
+                    'estado' => $estado,
                     'user_id' => 1 // Usuario predeterminado
                 ];
 
                 // Ejecutar inserción
                 $insert_stmt->execute($params);
 
-                echo "[$index] Insertado: Parcela ID {$parcela_id}, Cliente ID {$cliente_id}, Año {$params['anio']}, Mes {$params['mes']}, Monto {$params['monto']}, Saldo {$params['saldo']}".PHP_EOL;
+                echo "[$index] Insertado: Parcela ID {$parcela_id}, Cliente ID {$cliente_id}, Año {$params['anio']}, Mes {$params['mes']}, Monto {$params['monto']}, Saldo {$params['saldo']}, Estado {$params['estado']}" . PHP_EOL;
             }
         } catch (Exception $e) {
             $error_count++;
@@ -87,7 +95,6 @@ try {
     $completion_message = "✅ Migración completada con $error_count errores. No se encontraron parcelas para $clientes_sin_parcela_count clientes.";
     echo $completion_message . PHP_EOL;
     writeLog($completion_message);
-
 } catch (PDOException $e) {
     $error_message = '❌ Error de conexión: ' . $e->getMessage();
     echo $error_message . PHP_EOL;

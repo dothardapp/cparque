@@ -41,8 +41,8 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
-                ClientesOverview::class,
                 CantidadInhumacionesChart::class,
+                ClientesOverview::class,
             ])
             ->middleware([
                 EncryptCookies::class,
