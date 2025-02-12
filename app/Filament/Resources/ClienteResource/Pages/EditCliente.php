@@ -16,7 +16,7 @@ class EditCliente extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\ViewAction::make(),
+            Actions\ViewAction::make()->label('Cancelar'),
             Actions\DeleteAction::make(),
         ];
     }

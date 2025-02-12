@@ -4,7 +4,6 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ClienteResource\Pages;
 use App\Filament\Resources\ClienteResource\RelationManagers\ContactosRelationManager;
-use App\Filament\Resources\ClienteResource\RelationManagers\CuentasCorrientesRelationManager;
 use App\Filament\Resources\ClienteResource\RelationManagers\ExpensasRelationManager;
 use App\Filament\Resources\ClienteResource\RelationManagers\InhumadosRelationManager;
 use App\Filament\Resources\ClienteResource\RelationManagers\ParcelasRelationManager;
@@ -41,7 +40,7 @@ class ClienteResource extends Resource
                     })
                     ->unique(ignoreRecord: true)
                     ->reactive()
-                    ->afterStateUpdated(fn ($state, callable $set) => $set('codigo', trim($state))),
+                    ->afterStateUpdated(fn($state, callable $set) => $set('codigo', trim($state))),
 
                 Forms\Components\TextInput::make('nombre')
                     ->required()
@@ -51,8 +50,9 @@ class ClienteResource extends Resource
                     ->required()
                     ->maxLength(100),
 
-                Forms\Components\DatePicker::make('fecha_nacimiento')
-                    ->required(),
+                /*Forms\Components\DatePicker::make('fecha_nacimiento')
+                    ->required()
+                    ->label('Fecha de Inicio'),*/
             ]);
     }
 
@@ -87,9 +87,8 @@ class ClienteResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->defaultSort('codigo', 'desc')
-            ->headerActions([
-            ])
+            ->defaultSort('codigo', 'asc')
+            ->headerActions([])
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),

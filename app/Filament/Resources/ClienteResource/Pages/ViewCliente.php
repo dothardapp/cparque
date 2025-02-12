@@ -3,8 +3,8 @@
 namespace App\Filament\Resources\ClienteResource\Pages;
 
 use App\Filament\Resources\ClienteResource;
-use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Actions;
 
 class ViewCliente extends ViewRecord
 {
@@ -14,6 +14,11 @@ class ViewCliente extends ViewRecord
     {
         return [
             Actions\EditAction::make(),
+            Actions\Action::make('volver')
+                ->label('Volver')
+                ->url(fn() => ClienteResource::getUrl()) // Redirige al listado de clientes
+                ->icon('heroicon-o-arrow-left')
+                ->color('secondary'),
         ];
     }
 }
