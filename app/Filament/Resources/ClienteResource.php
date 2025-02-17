@@ -17,6 +17,7 @@ use Filament\Tables\Table;
 class ClienteResource extends Resource
 {
     protected static ?string $model = Cliente::class;
+    protected static ?string $navigationGroup = 'Cementerio';
     protected static ?string $navigationIcon = 'heroicon-m-users';
 
     public static function form(Form $form): Form
@@ -50,9 +51,9 @@ class ClienteResource extends Resource
                     ->required()
                     ->maxLength(100),
 
-                /*Forms\Components\DatePicker::make('fecha_nacimiento')
+                Forms\Components\DatePicker::make('fecha_nacimiento')
                     ->required()
-                    ->label('Fecha de Inicio'),*/
+                    ->label('Fecha de Inicio'),
             ]);
     }
 

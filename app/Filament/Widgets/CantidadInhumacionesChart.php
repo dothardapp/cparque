@@ -8,6 +8,16 @@ use Illuminate\Support\Facades\DB;
 class CantidadInhumacionesChart extends ChartWidget
 {
     protected static ?string $heading = 'Inhumaciones por Año';
+    protected static ?int $sort = 2;
+    //protected int | string | array $columnSpan = 'full';
+
+    protected int | string | array $columnSpan = [
+
+        'md' => 1, // En pantallas medianas
+        'lg' => 1, // En pantallas grandes
+        'xl' => 1, // En pantallas extra grandes
+
+    ];
 
     protected function getData(): array
     {

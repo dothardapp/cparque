@@ -8,6 +8,15 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class DeudaTotalWidget extends BaseWidget
 {
+    protected static ?int $sort = 1;
+    protected int | string | array $columnSpan = [
+
+        'md' => 2, // En pantallas medianas
+        'lg' => 2, // En pantallas grandes
+        'xl' => 2, // En pantallas extra grandes
+
+    ];
+
     protected function getStats(): array
     {
         $totalDeuda = Expensa::where('estado', '!=', 'pagado')->sum('saldo');

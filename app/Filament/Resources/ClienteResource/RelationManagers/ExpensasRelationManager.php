@@ -4,6 +4,7 @@ namespace App\Filament\Resources\ClienteResource\RelationManagers;
 
 use App\Actions\AddDeudaAction;
 use App\Actions\AddExpensaAction;
+use App\Actions\RegistrarPagoExpensas;
 use App\Models\Expensa;
 use Filament\Forms;
 use Filament\Forms\Components\Hidden;
@@ -151,8 +152,9 @@ class ExpensasRelationManager extends RelationManager
             ])
             ->headerActions([
 
-                AddExpensaAction::make(),
-                AddDeudaAction::make()
+                //AddExpensaAction::make(),
+                AddDeudaAction::make(),
+                RegistrarPagoExpensas::make(),
             ])
             ->paginated([12, 24, 36, 50, 'all'])
             ->actions([
