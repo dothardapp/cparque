@@ -22,19 +22,30 @@ class CajaMovimiento extends Model
         'medio_pago',
         'user_id',
         'numero_recibo',
+        'qr_code'
     ];
 
+    protected $casts = [
+        'fecha_y_hora' => 'datetime', // ✅ Convierte automáticamente a `Carbon`
+    ];
 
     protected static function boot()
     {
         parent::boot();
 
         static::creating(function ($movimiento) {
+            // Generar el número de recibo como antes
             $ultimoRecibo = self::max('numero_recibo');
             $nuevoNumero = $ultimoRecibo ? (intval($ultimoRecibo) + 1) : 1;
             $movimiento->numero_recibo = str_pad($nuevoNumero, 6, '0', STR_PAD_LEFT);
+
+            //✅ Generar el QR Code ÚNICO basado en ID + Timestamp solo si aún no tiene uno
+            if (!$movimiento->qr_code) {
+                $movimiento->qr_code = hash('sha256', uniqid($movimiento->numero_recibo, true));
+            }
         });
     }
+
 
     public function referencia(): MorphTo
     {

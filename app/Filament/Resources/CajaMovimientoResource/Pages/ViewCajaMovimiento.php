@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\CajaMovimientoResource\Pages;
 
+use App\Actions\ViewReciboPDFAction;
 use App\Filament\Resources\CajaMovimientoResource;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Infolist;
@@ -12,6 +13,18 @@ use Filament\Infolists\Components\Grid;
 class ViewCajaMovimiento extends ViewRecord
 {
     protected static string $resource = CajaMovimientoResource::class;
+
+    public function getTitle(): string
+    {
+        return "Movimiento N° {$this->record->numero_recibo} - {$this->record->cliente->nombre} {$this->record->cliente->apellido}";
+    }
+
+    public function getHeaderActions(): array
+    {
+        return [
+            ViewReciboPDFAction::make($this->record->id),
+        ];
+    }
 
     public function getInfolist(string $name): ?Infolist
     {

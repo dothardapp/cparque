@@ -41,6 +41,8 @@ return new class extends Migration
             // Nuevo campo para información extra
             $table->text('detalle')->nullable(); // Puede usarse para guardar notas o detalles adicionales
 
+            $table->string('qr_code')->unique()->nullable();
+
             $table->timestamps();
         });
     }

@@ -13,13 +13,14 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class CajaMovimientoResource extends Resource
 {
     protected static ?string $model = CajaMovimiento::class;
-    protected static ?string $navigationIcon = 'heroicon-m-document-currency-dollar';
+    protected static ?string $navigationIcon = 'tabler-cash-register';
     protected static ?string $navigationGroup = 'Finanzas';
-    protected static ?string $navigationLabel = 'Movimientos de Caja';
+    protected static ?string $navigationLabel = 'Caja';
     protected static ?string $modelLabel = 'Movimientos de Caja';
 
     public static function form(Forms\Form $form): Forms\Form
@@ -178,4 +179,29 @@ class CajaMovimientoResource extends Resource
         ];
     }
 
+
+
+    public static function canCreate(): bool
+    {
+        $user = Auth::user();
+
+        // Solo permitir a los usuarios con rol "admin" crear nuevos movimientos
+        return $user && $user->hasRole('admin');
+    }
+
+    public static function canEdit($record): bool
+    {
+        $user = Auth::user();
+
+        // Solo permitir a los usuarios con rol "admin" editar movimientos existentes
+        return $user && $user->hasRole('admin');
+    }
+
+    public static function canDelete($record): bool
+    {
+        $user = Auth::user();
+
+        // Solo los admins pueden borrar
+        return $user && $user->hasRole('admin');
+    }
 }

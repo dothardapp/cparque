@@ -24,7 +24,7 @@ class RegistrarPagoExpensas
                 Select::make('anio')
                     ->label('Seleccionar Año')
                     ->options(fn($livewire) => Expensa::where('cliente_id', $livewire->ownerRecord->id)
-                        ->where('estado', '!=', 'pagado') // Solo años con meses pendientes
+                        ->where('estado', '!=', 'pagado')
                         ->distinct()
                         ->orderBy('anio', 'desc')
                         ->pluck('anio', 'anio'))
@@ -35,17 +35,16 @@ class RegistrarPagoExpensas
                 // Selección de Meses (solo meses pendientes del año seleccionado)
                 Select::make('expensas_pagadas')
                     ->label('Seleccionar Meses')
-                    ->options(
-                        fn(callable $get, $livewire) =>
+                    ->options(fn(callable $get, $livewire) =>
                         Expensa::where('cliente_id', $livewire->ownerRecord->id)
-                            ->where('estado', '!=', 'pagado') // Solo meses pendientes
-                            ->where('anio', $get('anio')) // Filtra por el año seleccionado
-                            ->orderBy('mes') // Ordena los meses correctamente
+                            ->where('estado', '!=', 'pagado')
+                            ->where('anio', $get('anio'))
+                            ->orderBy('mes')
                             ->get()
                             ->mapWithKeys(fn($expensa) => [
                                 $expensa->id => sprintf(
                                     '%s / %s - ARS %s',
-                                    self::nombreMes($expensa->mes), // Convierte el número de mes a nombre
+                                    self::nombreMes($expensa->mes),
                                     $expensa->anio,
                                     number_format($expensa->saldo, 2, ',', '.')
                                 )
@@ -55,12 +54,11 @@ class RegistrarPagoExpensas
                     ->searchable()
                     ->reactive()
                     ->required()
-                    ->afterStateUpdated(
-                        fn(callable $get, callable $set) =>
+                    ->afterStateUpdated(fn(callable $get, callable $set) =>
                         $set('monto_total', Expensa::whereIn('id', array_filter((array) $get('expensas_pagadas')))->sum('saldo'))
                     ),
 
-                // Monto Total (Calculado automáticamente según los meses seleccionados)
+                // Monto Total
                 TextInput::make('monto_total')
                     ->label('Monto Total')
                     ->numeric()
@@ -68,7 +66,6 @@ class RegistrarPagoExpensas
                     ->disabled()
                     ->reactive()
                     ->extraAttributes(['class' => 'text-lg font-bold']),
-
 
                 // Medio de Pago
                 Select::make('medio_pago')
@@ -100,19 +97,21 @@ class RegistrarPagoExpensas
                     // Obtener la primera parcela asociada a las expensas pagadas
                     $parcela = $expensasSeleccionadas->first()->parcela ?? null;
 
-                    // Generar descripción detallada con el cliente, la parcela, los meses y años seleccionados
+                    // Generar descripción detallada
                     $concepto = sprintf(
                         'Pago de Expensas - Cliente: %s %s | Parcela: %s | Meses: %s',
-                        $record->nombre, // Nombre del cliente
-                        $record->apellido, // Apellido del cliente
-                        $parcela?->descripcion ?? 'Sin parcela', // Descripción de la parcela (si existe)
+                        $record->nombre,
+                        $record->apellido,
+                        $parcela?->descripcion ?? 'Sin parcela',
                         $expensasSeleccionadas->map(fn($e) => self::nombreMes($e->mes) . ' ' . $e->anio)->implode(', ')
                     );
-
 
                     // Obtener el próximo número de recibo
                     $ultimoRecibo = CajaMovimiento::max('numero_recibo') ?? 0;
                     $numeroRecibo = str_pad($ultimoRecibo + 1, 6, '0', STR_PAD_LEFT);
+
+                    // ✅ Generar un código QR único para este recibo
+                    $qrCode = hash('sha256', uniqid($numeroRecibo, true));
 
                     // Crear movimiento en caja
                     $movimiento = new CajaMovimiento([
@@ -124,6 +123,7 @@ class RegistrarPagoExpensas
                         'numero_recibo' => $numeroRecibo,
                         'concepto' => $concepto,
                         'user_id' => Auth::id(),
+                        'qr_code' => $qrCode, // ✅ Guardamos el QR
                     ]);
 
                     // Relacionar con la parcela si existe
@@ -149,20 +149,9 @@ class RegistrarPagoExpensas
     private static function nombreMes($numeroMes): string
     {
         $meses = [
-            1 => 'Enero',
-            2 => 'Febrero',
-            3 => 'Marzo',
-            4 => 'Abril',
-            5 => 'Mayo',
-            6 => 'Junio',
-            7 => 'Julio',
-            8 => 'Agosto',
-            9 => 'Septiembre',
-            10 => 'Octubre',
-            11 => 'Noviembre',
-            12 => 'Diciembre'
+            1 => 'Enero', 2 => 'Febrero', 3 => 'Marzo', 4 => 'Abril', 5 => 'Mayo', 6 => 'Junio',
+            7 => 'Julio', 8 => 'Agosto', 9 => 'Septiembre', 10 => 'Octubre', 11 => 'Noviembre', 12 => 'Diciembre'
         ];
-
         return $meses[$numeroMes] ?? 'Desconocido';
     }
 }

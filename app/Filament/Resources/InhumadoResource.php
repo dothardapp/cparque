@@ -40,7 +40,7 @@ class InhumadoResource extends Resource
 
                 Forms\Components\DatePicker::make('fecha_inhumacion')
                     ->required(),
-                    
+
                 Forms\Components\DatePicker::make('fecha_nacimiento'),
 
             ]);
@@ -50,24 +50,19 @@ class InhumadoResource extends Resource
     {
         return $table
             ->columns([
-                /*Tables\Columns\TextColumn::make('cliente_id')
-                    ->numeric()
-                    ->sortable(),*/
 
                 Tables\Columns\TextColumn::make('parcela.descripcion')
                     ->label('Parcela')
                     ->sortable()
                     ->searchable(),
 
-
                 Tables\Columns\TextColumn::make('nombre')
-                    ->searchable(),
-
-                Tables\Columns\TextColumn::make('apellido')
-                    ->searchable(),
+                    ->label('Inhumado')
+                    ->sortable()
+                    ->searchable()
+                    ->formatStateUsing(fn($record) => "{$record->nombre} {$record->apellido}"),
 
                 Tables\Columns\TextColumn::make('nivel'),
-
 
                 /*Tables\Columns\TextColumn::make('fecha_nacimiento')
                     ->date()
@@ -77,7 +72,14 @@ class InhumadoResource extends Resource
                     ->date()
                     ->sortable(),
 
-                    Tables\Columns\TextColumn::make('created_at')
+                Tables\Columns\TextColumn::make('cliente.nombre')
+                    ->label('Cliente')
+                    ->sortable()
+                    ->searchable()
+                    ->formatStateUsing(fn($record) => "{$record->cliente->nombre} {$record->cliente->apellido}")
+                    ->url(fn($record) => route('filament.admin.resources.clientes.view', $record->cliente_id)),
+
+                Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -93,6 +95,7 @@ class InhumadoResource extends Resource
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
+            ->inverseRelationship('section')
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
