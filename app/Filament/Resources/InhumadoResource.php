@@ -9,7 +9,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-
+use Illuminate\Support\Facades\Auth;
 
 class InhumadoResource extends Resource
 {
@@ -98,7 +98,8 @@ class InhumadoResource extends Resource
             ->inverseRelationship('section')
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                    ->visible(fn () => Auth::user()?->hasRole('admin')),
                 ]),
             ]);
     }

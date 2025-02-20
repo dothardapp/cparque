@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CajaMovimientoPDFController;
+use App\Http\Controllers\ClienteReporteExpensasController;
 use App\Http\Controllers\ReciboQRController;
 use Filament\Http\Middleware\Authenticate; // Middleware de autenticación de Filament
 
@@ -14,6 +15,11 @@ Route::get('/', function () {
 Route::middleware(['web', Authenticate::class])->group(function () {
     Route::get('/admin/caja-movimiento/{record}/pdf', [CajaMovimientoPDFController::class, 'generarPDF'])
         ->name('caja-movimiento.pdf');
+});
+
+Route::middleware(['web', Authenticate::class])->group(function () {
+    Route::get('/admin/clientes/{id}/reporte', [ClienteReporteExpensasController::class, 'generarReporte'])
+        ->name('cliente.reporte');
 });
 
 // ✅ Nueva Ruta para Validar Recibo con Código QR (Pública)

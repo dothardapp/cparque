@@ -3,8 +3,8 @@
 namespace App\Filament\Resources\ClienteResource\RelationManagers;
 
 use App\Actions\AddDeudaAction;
-use App\Actions\AddExpensaAction;
 use App\Actions\RegistrarPagoExpensas;
+use App\Actions\ViewReporteExpensasAction;
 use App\Models\Expensa;
 use Filament\Forms;
 use Filament\Forms\Components\Hidden;
@@ -13,7 +13,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Model;
+
 
 class ExpensasRelationManager extends RelationManager
 {
@@ -85,10 +85,14 @@ class ExpensasRelationManager extends RelationManager
     public function table(Table $table): Table
     {
 
-        $totalAdeudado = $this->getTotalAdeudado();
+        //$totalAdeudado = $this->getTotalAdeudado();
 
         return $table
-            ->heading("Expensas - Total Adeudado: ARS" .number_format($totalAdeudado, 2, ',', '.'))
+            ->heading('Expensas')
+            ->description(fn() => new \Illuminate\Support\HtmlString(
+                view('filament.pages.expensas-heading', ['total' => $this->getTotalAdeudado()])->render()
+            ))
+
             ->recordTitleAttribute('anio')
             ->columns([
                 Tables\Columns\TextColumn::make('parcela.descripcion')
@@ -129,7 +133,7 @@ class ExpensasRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('usuario.name')
                     ->label('Registrado por'),
             ])
-            ->defaultSort('anio', 'desc')
+            ->defaultSort('anio', 'asc')
             ->filters([
                 Tables\Filters\SelectFilter::make('parcela_id')
                     ->label('Parcela')
@@ -152,9 +156,10 @@ class ExpensasRelationManager extends RelationManager
             ])
             ->headerActions([
 
-                //AddExpensaAction::make(),
                 AddDeudaAction::make(),
                 RegistrarPagoExpensas::make(),
+                ViewReporteExpensasAction::make($this->getOwnerRecord()->id),
+
             ])
             ->paginated([12, 24, 36, 50, 'all'])
             ->actions([

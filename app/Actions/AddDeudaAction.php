@@ -3,8 +3,8 @@
 namespace App\Actions;
 
 use App\Models\Expensa;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Tables\Actions\Action;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\DB;
@@ -17,15 +17,15 @@ class AddDeudaAction
             ->label('Generar Deuda')
             ->icon('heroicon-m-document-currency-dollar')
             ->form([
-                TextInput::make('desde_anio')
+                Select::make('desde_anio')
                     ->label('Desde Año')
-                    ->required()
-                    ->numeric(),
+                    ->options(array_combine(range(1994, 2025), range(1994, 2025)))
+                    ->required(),
 
-                TextInput::make('hasta_anio')
+                Select::make('hasta_anio')
                     ->label('Hasta Año')
-                    ->required()
-                    ->numeric(),
+                    ->options(array_combine(range(1994, 2025), range(1994, 2025)))
+                    ->required(),
 
                 Select::make('hasta_mes')
                     ->label('Hasta Mes en el último año')
@@ -43,14 +43,14 @@ class AddDeudaAction
                         '11' => '11 - Noviembre',
                         '12' => '12 - Diciembre',
                     ])
-                    ->default(12) // Por defecto hasta diciembre
+                    ->default(12)
                     ->required(),
 
                 TextInput::make('monto')
                     ->label('Monto a aplicar')
                     ->required()
-                    ->numeric()
-                    ->prefix('ARS '),
+                    ->prefix('ARS ')
+                    ->minValue(1),
             ])
             ->action(function (array $data, $livewire): void {
                 DB::transaction(function () use ($data, $livewire) {
@@ -66,8 +66,17 @@ class AddDeudaAction
 
                     $desdeAnio = $data['desde_anio'];
                     $hastaAnio = $data['hasta_anio'];
-                    $hastaMes = $data['hasta_mes']; // Mes límite en el último año
+                    $hastaMes = $data['hasta_mes'];
                     $monto = $data['monto'];
+
+                    if ($monto <= 0) {
+                        Notification::make()
+                            ->title('Monto inválido')
+                            ->body('El monto a aplicar no puede ser negativo.')
+                            ->danger()
+                            ->send();
+                        return;
+                    }
 
                     if ($desdeAnio > $hastaAnio) {
                         Notification::make()
@@ -84,7 +93,7 @@ class AddDeudaAction
 
                     foreach ($parcelas as $parcela) {
                         for ($anio = $desdeAnio; $anio <= $hastaAnio; $anio++) {
-                            $mesFinal = ($anio == $hastaAnio) ? $hastaMes : 12; // Último año solo hasta el mes seleccionado
+                            $mesFinal = ($anio == $hastaAnio) ? $hastaMes : 12;
 
                             for ($mes = 1; $mes <= $mesFinal; $mes++) {
                                 $existe = Expensa::where('parcela_id', $parcela->id)
