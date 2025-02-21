@@ -13,6 +13,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 
 class ExpensasRelationManager extends RelationManager
@@ -92,8 +93,6 @@ class ExpensasRelationManager extends RelationManager
             ->description(fn() => new \Illuminate\Support\HtmlString(
                 view('filament.pages.expensas-heading', ['total' => $this->getTotalAdeudado()])->render()
             ))
-
-            ->recordTitleAttribute('anio')
             ->columns([
                 Tables\Columns\TextColumn::make('parcela.descripcion')
                     ->label('Parcela')
@@ -101,11 +100,19 @@ class ExpensasRelationManager extends RelationManager
 
                 Tables\Columns\TextColumn::make('anio')
                     ->label('Año')
-                    ->searchable()
-                    ->sortable(),
+                    ->sortable(query: function (Builder $query, string $direction): Builder {
+                        return $query
+                            ->orderBy('anio', $direction)
+                            ->orderBy('mes', 'asc');
+                    }),
+
                 Tables\Columns\TextColumn::make('mes')
                     ->label('Mes')
-                    ->sortable(),
+                    ->formatStateUsing(fn($state) => [
+                        1 => 'Enero', 2 => 'Febrero', 3 => 'Marzo', 4 => 'Abril',
+                        5 => 'Mayo', 6 => 'Junio', 7 => 'Julio', 8 => 'Agosto',
+                        9 => 'Septiembre', 10 => 'Octubre', 11 => 'Noviembre', 12 => 'Diciembre'
+                    ][$state] ?? 'Desconocido'),
 
                 Tables\Columns\TextColumn::make('monto')
                     ->label('Monto')
